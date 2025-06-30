@@ -24,7 +24,7 @@ public class MainController {
   }
   @GetMapping("/save")
   public String demoSave() {
-    Student stud = new Student("Bhumi", "Sharma", "bhumisharma1080@gmail.com");
+    Student stud = new Student("Harsh", "Priye", "harsh.rzf@gmail.com");
     studentDAO.save(stud);
     return "Student saved! check DB.\n" + stud.toString();
   }

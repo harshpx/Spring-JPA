@@ -9,4 +9,7 @@ public interface StudentDAO {
   List<Student>findByFirstName(String theFirstName);
   Student findById(int id);
   Student findByIdAndUpdate(int id, String attribute, String lastName);
+  int batchUpdateByCondition(String targetAttribute, String targetValue, String conditionAttribute, String conditionValue);
+  Student deleteById(int id);
+  int batchDeleteByCondition(String attribute, String value);
 }

@@ -34,6 +34,9 @@ public class MainController {
       int requiredId = Integer.parseInt(id);
       if (requiredId > 0) {
         Student std = studentDAO.findById(requiredId);
+        if (std == null) {
+          return "Not found";
+        }
         return std.toString();
       } else {
         throw new NumberFormatException("Id Must be positive");
@@ -84,5 +87,39 @@ public class MainController {
       return "Failed to update, Invalid params";
     }
     return "Updated row: " + updatedStudent.toString();
+  }
+
+  @GetMapping("/updatebycondition")
+  public String temp(
+    @RequestParam(value = "targetAttribute", required = true) String targetAttribute,
+    @RequestParam(value = "targetValue", required = true) String targetValue,
+    @RequestParam(value = "conditionAttribute", required = true) String conditionAttribute,
+    @RequestParam(value = "conditionValue", required = true) String conditionValue
+  ) {
+    int res = studentDAO.batchUpdateByCondition(targetAttribute, targetValue, conditionAttribute, conditionValue);
+    if (res == 404) {
+      return "Failed to update";
+    }
+    return "Updated!";
+  }
+  @GetMapping("/deletebyid")
+  public String deleteById(@RequestParam(required = true, value = "id") int id) {
+    Student deletedStudent = studentDAO.deleteById(id);
+    if (deletedStudent == null) {
+      return "Student not found";
+    }
+    return "Student deleted successfully, Deleted Student: " + deletedStudent.toString();
+  }
+
+  @GetMapping("/deletebycondition")
+  public String deleteByCondition(
+    @RequestParam(required = true, value = "attribute") String attribute,
+    @RequestParam(required = true, value = "value") String value
+  ) {
+    int responseCode = studentDAO.batchDeleteByCondition(attribute, value);
+    if (responseCode == 404) {
+      return "Failed to execute deletion";
+    }
+    return "Batch deletion successful";
   }
 }

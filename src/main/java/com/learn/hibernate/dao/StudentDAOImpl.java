@@ -1,5 +1,5 @@
 package com.learn.hibernate.dao;
-
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -27,7 +27,7 @@ public class StudentDAOImpl implements StudentDAO {
     entityManager.persist(theStudent);
   }
 
-  @Override
+  @Override 
   public List<Student> findAll() {
     TypedQuery<Student> query = entityManager.createQuery("from Student order by id asc", Student.class);
     return query.getResultList();
@@ -90,5 +90,66 @@ public class StudentDAOImpl implements StudentDAO {
     }
     entityManager.merge(std);
     return std;
+  }
+  @Override
+  @Transactional
+  public int batchUpdateByCondition(String targetAttribute, String targetValue, String conditionAttribute, String conditionValue) {
+    List<String> validAttributes = Arrays.asList("id", "firstName", "lastName", "email");
+    if (!validAttributes.contains(targetAttribute) || !validAttributes.contains(conditionAttribute)) {
+      return 404;
+    }
+    try {
+      List<String> numericAttributes = Arrays.asList("id");
+      String str = "update Student set " + targetAttribute + " = ";
+      if (numericAttributes.contains(targetAttribute)) {
+        str += targetValue;
+      } else {
+        str += "'" + targetValue +"'";
+      }
+      str += " where " + conditionAttribute + " = ";
+      if (numericAttributes.contains(conditionAttribute)) {
+        str += conditionValue;
+      } else {
+        str += "'" + conditionValue +"'";
+      }
+      System.out.println(str);
+      int rowsUpdated = entityManager.createQuery(str).executeUpdate();
+      return rowsUpdated;
+    } catch (Exception e) {
+      return 404;
+    }
+  }
+  @Override
+  @Transactional
+  public Student deleteById(int id) {
+    Student std = entityManager.find(Student.class, id);
+    if (std == null) {
+      return null;
+    }
+    entityManager.remove(std);
+    return std;
+  }
+  @Override
+  @Transactional
+  public int batchDeleteByCondition(String attribute, String value) {
+    List<String> validAttributes = Arrays.asList("id", "firstName", "lastName", "email");
+    if (!validAttributes.contains(attribute)) {
+      return 404;
+    }
+
+    try {
+      List<String> numericAttributes = Arrays.asList("id");
+      String queryString = "delete from Student where " + attribute + " = ";
+      if (numericAttributes.contains(attribute)) {
+        queryString += value;
+      } else {
+        queryString += "'" + value + "'";
+      }
+
+      int modifiedRows = entityManager.createQuery(queryString).executeUpdate();
+      return modifiedRows;
+    } catch (Exception e) {
+      return 404;
+    }
   }
 }

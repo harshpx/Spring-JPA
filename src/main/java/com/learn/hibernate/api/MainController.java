@@ -1,21 +1,28 @@
 package com.learn.hibernate.api;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.tomcat.util.http.parser.TE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.learn.hibernate.dao.StudentDAO;
+import com.learn.hibernate.dao.TeacherDAO;
 import com.learn.hibernate.entity.Student;
+import com.learn.hibernate.entity.Teacher;
 
 @RestController
 public class MainController {
   private StudentDAO studentDAO;
+  private TeacherDAO teacherDAO;
 
   @Autowired
-  public MainController(StudentDAO studentDAO) {
+  public MainController(StudentDAO studentDAO, TeacherDAO teacherDAO) {
     this.studentDAO = studentDAO;
+    this.teacherDAO = teacherDAO;
   }
 
   @GetMapping("/")
@@ -121,5 +128,29 @@ public class MainController {
       return "Failed to execute deletion";
     }
     return "Batch deletion successful";
+  }
+
+  @GetMapping("/saveteachers")
+  public String saveTeachers() {
+    List<Teacher> arr = new ArrayList<>();
+    Teacher t1 = new Teacher("Alpha", "Sharma", "alpha.sharma@gmail.com");
+    arr.add(t1);
+    Teacher t2 = new Teacher("Beta", "Singh", "beta.singh@gmail.com");
+    arr.add(t2);
+    Teacher t3 = new Teacher("Gamma", "Choudhary", "gamma.choudhary@gmail.com");
+    arr.add(t3);
+    teacherDAO.save(arr);
+    return "Saved successfully!";
+  }
+
+  @GetMapping("/listteachers")
+  public String listTeachers() {
+    List<Teacher> arr = teacherDAO.findAll();
+    String str = "";
+    for (Teacher t : arr) {
+      str += t.toString();
+      str += "\n";
+    }
+    return str;
   }
 }

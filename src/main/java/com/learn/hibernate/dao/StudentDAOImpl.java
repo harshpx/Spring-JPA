@@ -70,7 +70,6 @@ public class StudentDAOImpl implements StudentDAO {
         return null;
       }
     } else if ("lastName".equals(attribute)) {
-      System.out.println("tried LN");
       String regex = "^[A-Za-z]+$";
       if (Pattern.matches(regex, updatedProperty)) {
         std.setLastName(updatedProperty);
@@ -112,7 +111,6 @@ public class StudentDAOImpl implements StudentDAO {
       } else {
         str += "'" + conditionValue +"'";
       }
-      System.out.println(str);
       int rowsUpdated = entityManager.createQuery(str).executeUpdate();
       return rowsUpdated;
     } catch (Exception e) {
